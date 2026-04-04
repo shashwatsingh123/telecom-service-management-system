@@ -67,20 +67,28 @@ router.post('/recharge', async (req, res) => {
     }
 
     await run('BEGIN TRANSACTION');
+    let committed = false;
+
     try {
       const result = await run(
         'INSERT INTO recharge_portal (SIM_ID, Customer_ID, Recharge_Date, Amount, Payment_Mode) VALUES (?, ?, date("now"), ?, ?)',
         [simId, customerId, normalizedAmount, paymentMode]
       );
       await run('COMMIT');
+      committed = true;
 
       res.status(201).json({
         message: 'Recharge successful',
         rechargeId: result.lastID
       });
-    } catch (txErr) {
-      await run('ROLLBACK');
-      throw txErr;
+    } finally {
+      if (!committed) {
+        try {
+          await run('ROLLBACK');
+        } catch (rollbackErr) {
+          console.error('ROLLBACK failed:', rollbackErr);
+        }
+      }
     }
   } catch (err) {
     console.error('POST /customer-portal/recharge error:', err);

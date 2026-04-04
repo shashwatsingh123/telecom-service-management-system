@@ -38,9 +38,11 @@ router.post('/customer-login', async (req, res) => {
       [aadhaarNumber]
     );
 
-    if (!customer) return res.status(401).json({ error: 'Invalid customer credentials' });
+    if (!customer || !customer.Password) {
+      return res.status(401).json({ error: 'Invalid customer credentials' });
+    }
 
-    const passwordValid = await bcrypt.compare(password, customer.Password || '');
+    const passwordValid = await bcrypt.compare(password, customer.Password);
     if (!passwordValid) return res.status(401).json({ error: 'Invalid customer credentials' });
 
     res.json({

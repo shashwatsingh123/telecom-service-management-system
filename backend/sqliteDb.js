@@ -1,7 +1,6 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto');
 
 const dbPath = path.join(__dirname, 'telecom_portal.sqlite');
 const db = new sqlite3.Database(dbPath);
@@ -34,6 +33,11 @@ function all(sql, params = []) {
 }
 
 async function ensureColumn(tableName, columnName, columnDef) {
+  const allowedTables = ['customer_portal'];
+  if (!allowedTables.includes(tableName)) {
+    throw new Error('Invalid table name for schema update');
+  }
+
   const columns = await all(`PRAGMA table_info(${tableName})`);
   const exists = columns.some((c) => c.name === columnName);
   if (!exists) {
@@ -91,13 +95,14 @@ async function initSqlite() {
   const adminCount = await get('SELECT COUNT(*) AS count FROM admin_user');
   if (!adminCount || adminCount.count === 0) {
     const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminPassword = process.env.ADMIN_PASSWORD || crypto.randomBytes(12).toString('base64url');
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminPassword) {
+      throw new Error('ADMIN_PASSWORD is required to initialize admin login securely');
+    }
+
     const adminPasswordHash = await bcrypt.hash(adminPassword, 10);
     await run('INSERT INTO admin_user (username, password) VALUES (?, ?)', [adminUsername, adminPasswordHash]);
-
-    if (!process.env.ADMIN_PASSWORD) {
-      console.warn(`No ADMIN_PASSWORD provided. Generated temporary admin password: ${adminPassword}`);
-    }
   }
 
   const customerCount = await get('SELECT COUNT(*) AS count FROM customer_portal');
