@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     const [rows] = await pool.query(
       `SELECT s.SIM_ID, s.Mobile_Number, s.Activation_Date, s.Status,
               s.Customer_ID, c.Name AS Customer_Name,
-              s.Plan_ID, p.Plan_Name
+              s.Plan_ID, p.Plan_Name, p.Cost AS Plan_Cost
        FROM SIM_Card s
        JOIN Customer c ON s.Customer_ID = c.Customer_ID
        JOIN Plan p ON s.Plan_ID = p.Plan_ID
@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
     const [rows] = await pool.query(
       `SELECT s.SIM_ID, s.Mobile_Number, s.Activation_Date, s.Status,
               s.Customer_ID, c.Name AS Customer_Name,
-              s.Plan_ID, p.Plan_Name
+              s.Plan_ID, p.Plan_Name, p.Cost AS Plan_Cost
        FROM SIM_Card s
        JOIN Customer c ON s.Customer_ID = c.Customer_ID
        JOIN Plan p ON s.Plan_ID = p.Plan_ID

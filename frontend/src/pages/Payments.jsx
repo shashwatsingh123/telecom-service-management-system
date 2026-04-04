@@ -80,59 +80,59 @@ function Payments() {
     switch (mode) {
       case 'UPI': return 'bg-purple-500/10 text-purple-400 border-purple-500/20';
       case 'Card': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'Cash': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      case 'Cash': return 'bg-emerald-500/10 text-green-600 border-emerald-500/20';
       case 'Net Banking': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-      default: return 'bg-dark-500/10 text-dark-400 border-dark-500/20';
+      default: return 'bg-dark-500/10 text-zinc-400 border-dark-500/20';
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between animate-fade-in-up">
+      <div className="flex items-center justify-between ">
         <div>
-          <h1 className="text-3xl font-bold text-dark-100">Payments</h1>
-          <p className="text-dark-400 mt-1">Manage payment records</p>
+          <h1 className="text-3xl font-bold text-zinc-100 tracking-tight">Payments</h1>
+          <p className="text-zinc-400 mt-1">Manage payment records</p>
         </div>
-        <button onClick={openCreate} className="btn-primary" id="btn-add-payment">+ Add Payment</button>
+        <button onClick={openCreate} className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all" id="btn-add-payment">+ Add Payment</button>
       </div>
 
-      <div className="glass-card animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div className="bg-[#18181b] shadow-sm ring-1 ring-gray-900/5 rounded-lg " >
         {loading ? (
-          <div className="p-8 text-center text-dark-400">Loading...</div>
+          <div className="p-8 text-center text-zinc-400">Loading...</div>
         ) : (
-          <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Payment ID</th>
-                  <th>Payment Date</th>
-                  <th>Amount (₹)</th>
-                  <th>Mode</th>
-                  <th>Bill ID</th>
-                  <th>Mobile Number</th>
-                  <th>Actions</th>
+          <div className="overflow-x-auto min-w-full rounded-b-2xl">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-zinc-900">
+                <tr className="hover:bg-zinc-900 transition-colors">
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Payment ID</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Payment Date</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Amount (₹)</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Mode</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Bill ID</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Mobile Number</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 bg-[#18181b]">
                 {payments.length === 0 ? (
-                  <tr><td colSpan="7" className="text-center py-8 text-dark-500">No payments found</td></tr>
+                  <tr className="hover:bg-zinc-900 transition-colors"><td colSpan="7" className="text-center py-8 text-zinc-400">No payments found</td></tr>
                 ) : (
                   payments.map((p) => (
                     <tr key={p.Payment_ID}>
-                      <td className="font-mono text-primary-400">{p.Payment_ID}</td>
-                      <td>{p.Payment_Date ? new Date(p.Payment_Date).toLocaleDateString('en-IN') : ''}</td>
-                      <td className="font-semibold text-emerald-400">₹{Number(p.Amount).toLocaleString('en-IN')}</td>
-                      <td>
-                        <span className={`status-badge border ${getModeColor(p.Payment_Mode)}`}>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono text-indigo-400">{p.Payment_ID}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{p.Payment_Date ? new Date(p.Payment_Date).toLocaleDateString('en-IN') : ''}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-semibold text-green-600">₹{Number(p.Amount).toLocaleString('en-IN')}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">
+                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium border ${getModeColor(p.Payment_Mode)}`}>
                           {p.Payment_Mode}
                         </span>
                       </td>
-                      <td className="font-mono">#{p.Bill_ID}</td>
-                      <td className="font-mono">{p.Mobile_Number}</td>
-                      <td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono">#{p.Bill_ID}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono">{p.Mobile_Number}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">
                         <div className="flex gap-2">
-                          <button onClick={() => openEdit(p)} className="btn-secondary">Edit</button>
-                          <button onClick={() => handleDelete(p.Payment_ID)} className="btn-danger">Delete</button>
+                          <button onClick={() => openEdit(p)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">Edit</button>
+                          <button onClick={() => handleDelete(p.Payment_ID)} className="px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-sm font-medium transition-colors">Delete</button>
                         </div>
                       </td>
                     </tr>
@@ -147,18 +147,17 @@ function Payments() {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editMode ? 'Edit Payment' : 'Add Payment'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Payment Date</label>
-            <input type="date" required className="input-field" value={form.Payment_Date}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Payment Date</label>
+            <input type="date" required className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Payment_Date}
               onChange={(e) => setForm({ ...form, Payment_Date: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Amount (₹)</label>
-            <input type="number" required step="0.01" min="0" className="input-field" value={form.Amount}
-              onChange={(e) => setForm({ ...form, Amount: e.target.value })} />
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Amount (₹)</label>
+            <input type="number" required step="0.01" min="0" className="block w-full rounded-xl border border-zinc-800 bg-zinc-800/50 py-2.5 px-3 text-zinc-500 cursor-not-allowed sm:text-sm transition-colors" value={form.Amount} readOnly />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Payment Mode</label>
-            <select className="select-field" value={form.Payment_Mode}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Payment Mode</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" value={form.Payment_Mode}
               onChange={(e) => setForm({ ...form, Payment_Mode: e.target.value })}>
               <option value="UPI">UPI</option>
               <option value="Card">Card</option>
@@ -167,9 +166,17 @@ function Payments() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Bill</label>
-            <select className="select-field" required value={form.Bill_ID}
-              onChange={(e) => setForm({ ...form, Bill_ID: e.target.value })}>
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Bill</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" required value={form.Bill_ID}
+              onChange={(e) => {
+                const selectedBillId = e.target.value;
+                const bill = bills.find(b => b.Bill_ID == selectedBillId);
+                setForm({ 
+                  ...form, 
+                  Bill_ID: selectedBillId, 
+                  Amount: bill ? bill.Total_Amount : form.Amount 
+                });
+              }}>
               <option value="">-- Select Bill --</option>
               {bills.map((b) => (
                 <option key={b.Bill_ID} value={b.Bill_ID}>
@@ -179,8 +186,8 @@ function Payments() {
             </select>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="btn-primary flex-1">{editMode ? 'Update' : 'Create'}</button>
-            <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary flex-1">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all flex-1">{editMode ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors flex-1">Cancel</button>
           </div>
         </form>
       </Modal>

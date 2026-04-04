@@ -89,61 +89,61 @@ function CallRecords() {
   const getTypeColor = (type) => {
     switch (type) {
       case 'Outgoing': return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
-      case 'Incoming': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+      case 'Incoming': return 'bg-emerald-500/10 text-green-600 border-emerald-500/20';
       case 'Missed': return 'bg-red-500/10 text-red-400 border-red-500/20';
-      default: return 'bg-dark-500/10 text-dark-400 border-dark-500/20';
+      default: return 'bg-dark-500/10 text-zinc-400 border-dark-500/20';
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between animate-fade-in-up">
+      <div className="flex items-center justify-between ">
         <div>
-          <h1 className="text-3xl font-bold text-dark-100">Call Records</h1>
-          <p className="text-dark-400 mt-1">View and manage call records (Weak Entity)</p>
+          <h1 className="text-3xl font-bold text-zinc-100 tracking-tight">Call Records</h1>
+          <p className="text-zinc-400 mt-1">View and manage call records (Weak Entity)</p>
         </div>
-        <button onClick={openCreate} className="btn-primary" id="btn-add-callrecord">+ Add Call Record</button>
+        <button onClick={openCreate} className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all" id="btn-add-callrecord">+ Add Call Record</button>
       </div>
 
-      <div className="glass-card animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div className="bg-[#18181b] shadow-sm ring-1 ring-gray-900/5 rounded-lg " >
         {loading ? (
-          <div className="p-8 text-center text-dark-400">Loading...</div>
+          <div className="p-8 text-center text-zinc-400">Loading...</div>
         ) : (
-          <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>SIM ID</th>
-                  <th>Call ID</th>
-                  <th>Mobile Number</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Duration</th>
-                  <th>Type</th>
-                  <th>Actions</th>
+          <div className="overflow-x-auto min-w-full rounded-b-2xl">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-zinc-900">
+                <tr className="hover:bg-zinc-900 transition-colors">
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">SIM ID</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Call ID</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Mobile Number</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Time</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Duration</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 bg-[#18181b]">
                 {records.length === 0 ? (
-                  <tr><td colSpan="8" className="text-center py-8 text-dark-500">No call records found</td></tr>
+                  <tr className="hover:bg-zinc-900 transition-colors"><td colSpan="8" className="text-center py-8 text-zinc-400">No call records found</td></tr>
                 ) : (
                   records.map((r) => (
                     <tr key={`${r.SIM_ID}-${r.Call_ID}`}>
-                      <td className="font-mono text-primary-400">{r.SIM_ID}</td>
-                      <td className="font-mono text-accent-400">{r.Call_ID}</td>
-                      <td className="font-mono">{r.Mobile_Number}</td>
-                      <td>{r.Call_Date ? new Date(r.Call_Date).toLocaleDateString('en-IN') : ''}</td>
-                      <td className="font-mono">{r.Call_Time}</td>
-                      <td>{formatDuration(r.Call_Duration)}</td>
-                      <td>
-                        <span className={`status-badge border ${getTypeColor(r.Call_Type)}`}>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono text-indigo-400">{r.SIM_ID}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono text-accent-400">{r.Call_ID}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono">{r.Mobile_Number}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{r.Call_Date ? new Date(r.Call_Date).toLocaleDateString('en-IN') : ''}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono">{r.Call_Time}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{formatDuration(r.Call_Duration)}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">
+                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium border ${getTypeColor(r.Call_Type)}`}>
                           {r.Call_Type}
                         </span>
                       </td>
-                      <td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">
                         <div className="flex gap-2">
-                          <button onClick={() => openEdit(r)} className="btn-secondary">Edit</button>
-                          <button onClick={() => handleDelete(r.SIM_ID, r.Call_ID)} className="btn-danger">Delete</button>
+                          <button onClick={() => openEdit(r)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">Edit</button>
+                          <button onClick={() => handleDelete(r.SIM_ID, r.Call_ID)} className="px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-sm font-medium transition-colors">Delete</button>
                         </div>
                       </td>
                     </tr>
@@ -158,34 +158,34 @@ function CallRecords() {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editMode ? 'Edit Call Record' : 'Add Call Record'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">SIM Card</label>
-            <select className="select-field" required value={form.SIM_ID} disabled={editMode}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">SIM Card</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" required value={form.SIM_ID} disabled={editMode}
               onChange={(e) => setForm({ ...form, SIM_ID: e.target.value })}>
               <option value="">-- Select SIM --</option>
               {sims.map((s) => (
                 <option key={s.SIM_ID} value={s.SIM_ID}>{s.Mobile_Number} (SIM ID: {s.SIM_ID})</option>
               ))}
             </select>
-            {editMode && <p className="text-xs text-dark-500 mt-1">SIM cannot be changed for existing records</p>}
+            {editMode && <p className="text-xs text-zinc-400 mt-1">SIM cannot be changed for existing records</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Call Date</label>
-            <input type="date" required className="input-field" value={form.Call_Date}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Call Date</label>
+            <input type="date" required className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Call_Date}
               onChange={(e) => setForm({ ...form, Call_Date: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Call Time</label>
-            <input type="time" required className="input-field" value={form.Call_Time}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Call Time</label>
+            <input type="time" required className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Call_Time}
               onChange={(e) => setForm({ ...form, Call_Time: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Duration (seconds)</label>
-            <input type="number" required min="0" className="input-field" value={form.Call_Duration}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Duration (seconds)</label>
+            <input type="number" required min="0" className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Call_Duration}
               onChange={(e) => setForm({ ...form, Call_Duration: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Call Type</label>
-            <select className="select-field" value={form.Call_Type}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Call Type</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" value={form.Call_Type}
               onChange={(e) => setForm({ ...form, Call_Type: e.target.value })}>
               <option value="Outgoing">Outgoing</option>
               <option value="Incoming">Incoming</option>
@@ -193,8 +193,8 @@ function CallRecords() {
             </select>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="btn-primary flex-1">{editMode ? 'Update' : 'Create'}</button>
-            <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary flex-1">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all flex-1">{editMode ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors flex-1">Cancel</button>
           </div>
         </form>
       </Modal>

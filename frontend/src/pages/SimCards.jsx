@@ -82,56 +82,56 @@ function SimCards() {
 
   const getStatusClass = (status) => {
     switch (status) {
-      case 'Active': return 'status-active';
-      case 'Inactive': return 'status-inactive';
-      case 'Blocked': return 'status-blocked';
-      default: return 'status-badge';
+      case 'Active': return 'inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20';
+      case 'Inactive': return 'inline-flex items-center rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10';
+      case 'Blocked': return 'inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10';
+      default: return 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium';
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between animate-fade-in-up">
+      <div className="flex items-center justify-between ">
         <div>
-          <h1 className="text-3xl font-bold text-dark-100">SIM Cards</h1>
-          <p className="text-dark-400 mt-1">Manage SIM card assignments</p>
+          <h1 className="text-3xl font-bold text-zinc-100 tracking-tight">SIM Cards</h1>
+          <p className="text-zinc-400 mt-1">Manage SIM card assignments</p>
         </div>
-        <button onClick={openCreate} className="btn-primary" id="btn-add-sim">+ Add SIM Card</button>
+        <button onClick={openCreate} className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all" id="btn-add-sim">+ Add SIM Card</button>
       </div>
 
-      <div className="glass-card animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div className="bg-[#18181b] shadow-sm ring-1 ring-gray-900/5 rounded-lg " >
         {loading ? (
-          <div className="p-8 text-center text-dark-400">Loading...</div>
+          <div className="p-8 text-center text-zinc-400">Loading...</div>
         ) : (
-          <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>SIM ID</th>
-                  <th>Mobile Number</th>
-                  <th>Activation Date</th>
-                  <th>Status</th>
-                  <th>Customer</th>
-                  <th>Plan</th>
-                  <th>Actions</th>
+          <div className="overflow-x-auto min-w-full rounded-b-2xl">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-zinc-900">
+                <tr className="hover:bg-zinc-900 transition-colors">
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">SIM ID</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Mobile Number</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Activation Date</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Customer</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Plan</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 bg-[#18181b]">
                 {sims.length === 0 ? (
-                  <tr><td colSpan="7" className="text-center py-8 text-dark-500">No SIM cards found</td></tr>
+                  <tr className="hover:bg-zinc-900 transition-colors"><td colSpan="7" className="text-center py-8 text-zinc-400">No SIM cards found</td></tr>
                 ) : (
                   sims.map((s) => (
                     <tr key={s.SIM_ID}>
-                      <td className="font-mono text-primary-400">{s.SIM_ID}</td>
-                      <td className="font-medium text-dark-100 font-mono">{s.Mobile_Number}</td>
-                      <td>{s.Activation_Date ? new Date(s.Activation_Date).toLocaleDateString('en-IN') : ''}</td>
-                      <td><span className={getStatusClass(s.Status)}>{s.Status}</span></td>
-                      <td>{s.Customer_Name}</td>
-                      <td>{s.Plan_Name}</td>
-                      <td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono text-indigo-400">{s.SIM_ID}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-medium text-zinc-100 tracking-tight font-mono">{s.Mobile_Number}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{s.Activation_Date ? new Date(s.Activation_Date).toLocaleDateString('en-IN') : ''}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400"><span className={getStatusClass(s.Status)}>{s.Status}</span></td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{s.Customer_Name}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{s.Plan_Name}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">
                         <div className="flex gap-2">
-                          <button onClick={() => openEdit(s)} className="btn-secondary">Edit</button>
-                          <button onClick={() => handleDelete(s.SIM_ID)} className="btn-danger">Delete</button>
+                          <button onClick={() => openEdit(s)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">Edit</button>
+                          <button onClick={() => handleDelete(s.SIM_ID)} className="px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-sm font-medium transition-colors">Delete</button>
                         </div>
                       </td>
                     </tr>
@@ -146,18 +146,18 @@ function SimCards() {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editMode ? 'Edit SIM Card' : 'Add SIM Card'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Mobile Number</label>
-            <input type="text" required className="input-field" value={form.Mobile_Number}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Mobile Number</label>
+            <input type="text" required className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Mobile_Number}
               onChange={(e) => setForm({ ...form, Mobile_Number: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Activation Date</label>
-            <input type="date" required className="input-field" value={form.Activation_Date}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Activation Date</label>
+            <input type="date" required className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Activation_Date}
               onChange={(e) => setForm({ ...form, Activation_Date: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Status</label>
-            <select className="select-field" value={form.Status}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Status</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" value={form.Status}
               onChange={(e) => setForm({ ...form, Status: e.target.value })}>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
@@ -165,8 +165,8 @@ function SimCards() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Customer</label>
-            <select className="select-field" required value={form.Customer_ID}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Customer</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" required value={form.Customer_ID}
               onChange={(e) => setForm({ ...form, Customer_ID: e.target.value })}>
               <option value="">-- Select Customer --</option>
               {customers.map((c) => (
@@ -175,8 +175,8 @@ function SimCards() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Plan</label>
-            <select className="select-field" required value={form.Plan_ID}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Plan</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" required value={form.Plan_ID}
               onChange={(e) => setForm({ ...form, Plan_ID: e.target.value })}>
               <option value="">-- Select Plan --</option>
               {plans.map((p) => (
@@ -185,8 +185,8 @@ function SimCards() {
             </select>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="btn-primary flex-1">{editMode ? 'Update' : 'Create'}</button>
-            <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary flex-1">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all flex-1">{editMode ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors flex-1">Cancel</button>
           </div>
         </form>
       </Modal>

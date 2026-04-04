@@ -74,51 +74,51 @@ function Plans() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between animate-fade-in-up">
+      <div className="flex items-center justify-between ">
         <div>
-          <h1 className="text-3xl font-bold text-dark-100">Plans</h1>
-          <p className="text-dark-400 mt-1">Manage mobile plans</p>
+          <h1 className="text-3xl font-bold text-zinc-100 tracking-tight">Plans</h1>
+          <p className="text-zinc-400 mt-1">Manage mobile plans</p>
         </div>
-        <button onClick={openCreate} className="btn-primary" id="btn-add-plan">+ Add Plan</button>
+        <button onClick={openCreate} className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all" id="btn-add-plan">+ Add Plan</button>
       </div>
 
-      <div className="glass-card animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div className="bg-[#18181b] shadow-sm ring-1 ring-gray-900/5 rounded-lg " >
         {loading ? (
-          <div className="p-8 text-center text-dark-400">Loading...</div>
+          <div className="p-8 text-center text-zinc-400">Loading...</div>
         ) : (
-          <div className="table-container">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Plan Name</th>
-                  <th>Type</th>
-                  <th>Cost (₹)</th>
-                  <th>Data Limit</th>
-                  <th>Validity (Days)</th>
-                  <th>Actions</th>
+          <div className="overflow-x-auto min-w-full rounded-b-2xl">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-zinc-900">
+                <tr className="hover:bg-zinc-900 transition-colors">
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">ID</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Plan Name</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Type</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Cost (₹)</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Data Limit</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Validity (Days)</th>
+                  <th className="px-6 py-5 text-left text-xs font-bold text-zinc-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 bg-[#18181b]">
                 {plans.length === 0 ? (
-                  <tr><td colSpan="7" className="text-center py-8 text-dark-500">No plans found</td></tr>
+                  <tr className="hover:bg-zinc-900 transition-colors"><td colSpan="7" className="text-center py-8 text-zinc-400">No plans found</td></tr>
                 ) : (
                   plans.map((p) => (
                     <tr key={p.Plan_ID}>
-                      <td className="font-mono text-primary-400">{p.Plan_ID}</td>
-                      <td className="font-medium text-dark-100">{p.Plan_Name}</td>
-                      <td>
-                        <span className={p.Plan_Type === 'Prepaid' ? 'status-active' : 'status-open'}>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-mono text-indigo-400">{p.Plan_ID}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-medium text-zinc-100 tracking-tight">{p.Plan_Name}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">
+                        <span className={p.Plan_Type === 'Prepaid' ? 'inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20' : 'inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10'}>
                           {p.Plan_Type}
                         </span>
                       </td>
-                      <td className="font-semibold text-emerald-400">₹{Number(p.Cost).toLocaleString('en-IN')}</td>
-                      <td>{p.Data_Limit}</td>
-                      <td>{p.Validity_Days}</td>
-                      <td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400 font-semibold text-green-600">₹{Number(p.Cost).toLocaleString('en-IN')}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{p.Data_Limit}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">{p.Validity_Days}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm text-zinc-400">
                         <div className="flex gap-2">
-                          <button onClick={() => openEdit(p)} className="btn-secondary">Edit</button>
-                          <button onClick={() => handleDelete(p.Plan_ID)} className="btn-danger">Delete</button>
+                          <button onClick={() => openEdit(p)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors">Edit</button>
+                          <button onClick={() => handleDelete(p.Plan_ID)} className="px-3 py-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-sm font-medium transition-colors">Delete</button>
                         </div>
                       </td>
                     </tr>
@@ -133,36 +133,36 @@ function Plans() {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editMode ? 'Edit Plan' : 'Add Plan'}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Plan Name</label>
-            <input type="text" required className="input-field" value={form.Plan_Name}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Plan Name</label>
+            <input type="text" required className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Plan_Name}
               onChange={(e) => setForm({ ...form, Plan_Name: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Plan Type</label>
-            <select className="select-field" value={form.Plan_Type}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Plan Type</label>
+            <select className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors cursor-pointer appearance-none" value={form.Plan_Type}
               onChange={(e) => setForm({ ...form, Plan_Type: e.target.value })}>
               <option value="Prepaid">Prepaid</option>
               <option value="Postpaid">Postpaid</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Cost (₹)</label>
-            <input type="number" required step="0.01" min="0" className="input-field" value={form.Cost}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Cost (₹)</label>
+            <input type="number" required step="0.01" min="0" className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Cost}
               onChange={(e) => setForm({ ...form, Cost: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Data Limit</label>
-            <input type="text" required className="input-field" placeholder="e.g. 2 GB/day" value={form.Data_Limit}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Data Limit</label>
+            <input type="text" required className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" placeholder="e.g. 2 GB/day" value={form.Data_Limit}
               onChange={(e) => setForm({ ...form, Data_Limit: e.target.value })} />
           </div>
           <div>
-            <label className="block text-sm font-medium text-dark-300 mb-1">Validity (Days)</label>
-            <input type="number" required min="1" className="input-field" value={form.Validity_Days}
+            <label className="block text-sm font-medium text-zinc-400 mb-1">Validity (Days)</label>
+            <input type="number" required min="1" className="block w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-colors" value={form.Validity_Days}
               onChange={(e) => setForm({ ...form, Validity_Days: e.target.value })} />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="btn-primary flex-1">{editMode ? 'Update' : 'Create'}</button>
-            <button type="button" onClick={() => setModalOpen(false)} className="btn-secondary flex-1">Cancel</button>
+            <button type="submit" className="px-4 py-2 bg-indigo-500 hover:bg-indigo-400 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 transition-all flex-1">{editMode ? 'Update' : 'Create'}</button>
+            <button type="button" onClick={() => setModalOpen(false)} className="px-3 py-1.5 bg-zinc-900 border border-zinc-700 text-zinc-300 rounded-lg text-sm font-medium hover:bg-zinc-800 transition-colors flex-1">Cancel</button>
           </div>
         </form>
       </Modal>
