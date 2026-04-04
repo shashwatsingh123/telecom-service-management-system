@@ -4,6 +4,7 @@ import API from '../api/axios';
 function CustomerPortal({ customerId, customerName, onLogout }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null);
   const [rechargeForm, setRechargeForm] = useState({ simId: '', amount: '', paymentMode: 'UPI' });
 
   const fetchProfile = useCallback(async () => {
@@ -15,7 +16,7 @@ function CustomerPortal({ customerId, customerName, onLogout }) {
       }
     } catch (err) {
       console.error('Failed to fetch customer portal:', err);
-      alert(err.response?.data?.error || 'Failed to load customer portal');
+      setMessage({ type: 'error', text: err.response?.data?.error || 'Failed to load customer portal' });
     } finally {
       setLoading(false);
     }
@@ -27,6 +28,7 @@ function CustomerPortal({ customerId, customerName, onLogout }) {
 
   const submitRecharge = async (e) => {
     e.preventDefault();
+    setMessage(null);
     try {
       await API.post('/customer-portal/recharge', {
         customerId,
@@ -36,9 +38,9 @@ function CustomerPortal({ customerId, customerName, onLogout }) {
       });
       setRechargeForm((prev) => ({ ...prev, amount: '' }));
       await fetchProfile();
-      alert('Recharge successful');
+      setMessage({ type: 'success', text: 'Recharge successful' });
     } catch (err) {
-      alert(err.response?.data?.error || 'Recharge failed');
+      setMessage({ type: 'error', text: err.response?.data?.error || 'Recharge failed' });
     }
   };
 
@@ -63,6 +65,12 @@ function CustomerPortal({ customerId, customerName, onLogout }) {
       </header>
 
       <main className="max-w-7xl mx-auto p-8 space-y-6">
+        {message && (
+          <div className={`rounded-xl border p-3 text-sm ${message.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : 'bg-red-500/10 border-red-500/30 text-red-300'}`}>
+            {message.text}
+          </div>
+        )}
+
         <section className="bg-[#18181b] border border-zinc-800/50 rounded-2xl p-5">
           <h2 className="text-xl font-bold tracking-tight">Basic Information</h2>
           <div className="grid sm:grid-cols-3 gap-4 mt-4 text-sm">

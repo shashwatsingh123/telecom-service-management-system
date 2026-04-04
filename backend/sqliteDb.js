@@ -32,16 +32,11 @@ function all(sql, params = []) {
   });
 }
 
-async function ensureColumn(tableName, columnName, columnDef) {
-  const allowedTables = ['customer_portal'];
-  if (!allowedTables.includes(tableName)) {
-    throw new Error('Invalid table name for schema update');
-  }
-
-  const columns = await all(`PRAGMA table_info(${tableName})`);
-  const exists = columns.some((c) => c.name === columnName);
+async function ensureCustomerPasswordColumn() {
+  const columns = await all('PRAGMA table_info(customer_portal)');
+  const exists = columns.some((c) => c.name === 'Password');
   if (!exists) {
-    await run(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnDef}`);
+    await run('ALTER TABLE customer_portal ADD COLUMN Password TEXT');
   }
 }
 
@@ -90,7 +85,7 @@ async function initSqlite() {
     FOREIGN KEY (Customer_ID) REFERENCES customer_portal(Customer_ID)
   )`);
 
-  await ensureColumn('customer_portal', 'Password', 'TEXT');
+  await ensureCustomerPasswordColumn();
 
   const adminCount = await get('SELECT COUNT(*) AS count FROM admin_user');
   if (!adminCount || adminCount.count === 0) {
@@ -138,7 +133,7 @@ async function initSqlite() {
   );
 
   for (const row of rowsNeedingPassword) {
-    const fallbackPassword = `cust@${String(row.Aadhaar_Number).slice(-4)}`;
+    const fallbackPassword = `cust-${String(row.Customer_ID).padStart(4, '0')}`;
     const hash = await bcrypt.hash(fallbackPassword, 10);
     await run('UPDATE customer_portal SET Password = ? WHERE Customer_ID = ?', [hash, row.Customer_ID]);
   }

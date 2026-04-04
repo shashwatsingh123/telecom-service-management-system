@@ -66,12 +66,12 @@ router.post('/recharge', async (req, res) => {
       return res.status(404).json({ error: 'SIM not found for this customer' });
     }
 
-    await run('BEGIN TRANSACTION');
+    await run('BEGIN');
     let committed = false;
 
     try {
       const result = await run(
-        'INSERT INTO recharge_portal (SIM_ID, Customer_ID, Recharge_Date, Amount, Payment_Mode) VALUES (?, ?, date("now"), ?, ?)',
+        'INSERT INTO recharge_portal (SIM_ID, Customer_ID, Recharge_Date, Amount, Payment_Mode) VALUES (?, ?, datetime("now"), ?, ?)',
         [simId, customerId, normalizedAmount, paymentMode]
       );
       await run('COMMIT');
