@@ -86,7 +86,7 @@ router.post('/recharge', async (req, res) => {
         try {
           await run('ROLLBACK');
         } catch (rollbackErr) {
-          console.error('ROLLBACK failed:', rollbackErr);
+          console.error(`ROLLBACK failed for recharge transaction (customerId=${customerId}, simId=${simId}):`, rollbackErr);
         }
       }
     }

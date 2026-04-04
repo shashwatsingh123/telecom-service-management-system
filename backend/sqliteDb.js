@@ -1,6 +1,7 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const dbPath = path.join(__dirname, 'telecom_portal.sqlite');
 const db = new sqlite3.Database(dbPath);
@@ -129,11 +130,11 @@ async function initSqlite() {
   }
 
   const rowsNeedingPassword = await all(
-    'SELECT Customer_ID, Aadhaar_Number FROM customer_portal WHERE Password IS NULL OR Password = ""'
+    'SELECT Customer_ID FROM customer_portal WHERE Password IS NULL OR Password = ""'
   );
 
   for (const row of rowsNeedingPassword) {
-    const fallbackPassword = `cust-${String(row.Customer_ID).padStart(4, '0')}`;
+    const fallbackPassword = crypto.randomBytes(12).toString('base64url');
     const hash = await bcrypt.hash(fallbackPassword, 10);
     await run('UPDATE customer_portal SET Password = ? WHERE Customer_ID = ?', [hash, row.Customer_ID]);
   }

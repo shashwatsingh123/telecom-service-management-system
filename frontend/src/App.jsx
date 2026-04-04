@@ -13,18 +13,23 @@ import Complaints from './pages/Complaints';
 import Login from './pages/Login';
 import CustomerPortal from './pages/CustomerPortal';
 
-const AUTH_KEY = 'telecom_auth_session';
+const AUTH_SESSION_KEY = 'telecom_auth_session';
 
 function App() {
   const [session, setSession] = useState(() => {
-    const raw = sessionStorage.getItem(AUTH_KEY);
-    return raw ? JSON.parse(raw) : null;
+    try {
+      const raw = sessionStorage.getItem(AUTH_SESSION_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      return null;
+    }
   });
 
   const setAndPersistSession = (value) => {
     setSession(value);
-    if (value) sessionStorage.setItem(AUTH_KEY, JSON.stringify(value));
-    else sessionStorage.removeItem(AUTH_KEY);
+    if (value) sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(value));
+    else sessionStorage.removeItem(AUTH_SESSION_KEY);
   };
 
   const handleAdminAuth = (data) => {
