@@ -17,14 +17,14 @@ const AUTH_KEY = 'telecom_auth_session';
 
 function App() {
   const [session, setSession] = useState(() => {
-    const raw = localStorage.getItem(AUTH_KEY);
+    const raw = sessionStorage.getItem(AUTH_KEY);
     return raw ? JSON.parse(raw) : null;
   });
 
   const setAndPersistSession = (value) => {
     setSession(value);
-    if (value) localStorage.setItem(AUTH_KEY, JSON.stringify(value));
-    else localStorage.removeItem(AUTH_KEY);
+    if (value) sessionStorage.setItem(AUTH_KEY, JSON.stringify(value));
+    else sessionStorage.removeItem(AUTH_KEY);
   };
 
   const handleAdminAuth = (data) => {

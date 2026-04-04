@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import API from '../api/axios';
 
 function CustomerPortal({ customerId, customerName, onLogout }) {
@@ -6,12 +6,12 @@ function CustomerPortal({ customerId, customerName, onLogout }) {
   const [loading, setLoading] = useState(true);
   const [rechargeForm, setRechargeForm] = useState({ simId: '', amount: '', paymentMode: 'UPI' });
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const res = await API.get(`/customer-portal/profile/${customerId}`);
       setData(res.data);
-      if (res.data?.sims?.length && !rechargeForm.simId) {
-        setRechargeForm((prev) => ({ ...prev, simId: String(res.data.sims[0].SIM_ID) }));
+      if (res.data?.sims?.length) {
+        setRechargeForm((prev) => (prev.simId ? prev : { ...prev, simId: String(res.data.sims[0].SIM_ID) }));
       }
     } catch (err) {
       console.error('Failed to fetch customer portal:', err);
@@ -19,11 +19,11 @@ function CustomerPortal({ customerId, customerName, onLogout }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [customerId]);
 
   useEffect(() => {
     fetchProfile();
-  }, [customerId]);
+  }, [fetchProfile]);
 
   const submitRecharge = async (e) => {
     e.preventDefault();

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { get } = require('../sqliteDb');
+const bcrypt = require('bcryptjs');
 
 router.post('/admin-login', async (req, res) => {
   try {
@@ -9,12 +10,12 @@ router.post('/admin-login', async (req, res) => {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
-    const admin = await get(
-      'SELECT id, username FROM admin_user WHERE username = ? AND password = ?',
-      [username, password]
-    );
+    const admin = await get('SELECT id, username, password FROM admin_user WHERE username = ?', [username]);
 
     if (!admin) return res.status(401).json({ error: 'Invalid admin credentials' });
+
+    const passwordValid = await bcrypt.compare(password, admin.password);
+    if (!passwordValid) return res.status(401).json({ error: 'Invalid admin credentials' });
 
     res.json({ role: 'admin', username: admin.username });
   } catch (err) {
@@ -25,19 +26,22 @@ router.post('/admin-login', async (req, res) => {
 
 router.post('/customer-login', async (req, res) => {
   try {
-    const { aadhaarNumber, phone } = req.body;
-    if (!aadhaarNumber || !phone) {
-      return res.status(400).json({ error: 'Aadhaar number and phone are required' });
+    const { aadhaarNumber, password } = req.body;
+    if (!aadhaarNumber || !password) {
+      return res.status(400).json({ error: 'Aadhaar number and password are required' });
     }
 
     const customer = await get(
-      `SELECT Customer_ID, Name, Aadhaar_Number, Phone
+      `SELECT Customer_ID, Name, Aadhaar_Number, Phone, Password
        FROM customer_portal
-       WHERE Aadhaar_Number = ? AND Phone = ?`,
-      [aadhaarNumber, phone]
+       WHERE Aadhaar_Number = ?`,
+      [aadhaarNumber]
     );
 
     if (!customer) return res.status(401).json({ error: 'Invalid customer credentials' });
+
+    const passwordValid = await bcrypt.compare(password, customer.Password || '');
+    if (!passwordValid) return res.status(401).json({ error: 'Invalid customer credentials' });
 
     res.json({
       role: 'customer',

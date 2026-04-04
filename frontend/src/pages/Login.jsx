@@ -4,7 +4,7 @@ import API from '../api/axios';
 function Login({ onAdminAuth, onCustomerAuth }) {
   const [mode, setMode] = useState('admin');
   const [adminForm, setAdminForm] = useState({ username: '', password: '' });
-  const [customerForm, setCustomerForm] = useState({ aadhaarNumber: '', phone: '' });
+  const [customerForm, setCustomerForm] = useState({ aadhaarNumber: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -102,12 +102,12 @@ function Login({ onAdminAuth, onCustomerAuth }) {
               />
             </div>
             <div>
-              <label className="block text-sm text-zinc-400 mb-1">Phone</label>
+              <label className="block text-sm text-zinc-400 mb-1">Password</label>
               <input
-                type="text"
+                type="password"
                 required
-                value={customerForm.phone}
-                onChange={(e) => setCustomerForm({ ...customerForm, phone: e.target.value })}
+                value={customerForm.password}
+                onChange={(e) => setCustomerForm({ ...customerForm, password: e.target.value })}
                 className="w-full rounded-xl border border-zinc-800 bg-zinc-900/50 py-2.5 px-3 text-zinc-100 focus:border-indigo-500 focus:outline-none"
               />
             </div>

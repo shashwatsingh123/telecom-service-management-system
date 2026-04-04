@@ -47,6 +47,16 @@ router.post('/recharge', async (req, res) => {
       return res.status(400).json({ error: 'customerId, simId, amount and paymentMode are required' });
     }
 
+    const normalizedAmount = Number(amount);
+    if (!Number.isFinite(normalizedAmount) || normalizedAmount <= 0) {
+      return res.status(400).json({ error: 'Amount must be a positive number' });
+    }
+
+    const allowedModes = ['Cash', 'Card', 'UPI', 'Net Banking'];
+    if (!allowedModes.includes(paymentMode)) {
+      return res.status(400).json({ error: 'Invalid payment mode' });
+    }
+
     const sim = await get(
       'SELECT SIM_ID FROM sim_card_portal WHERE SIM_ID = ? AND Customer_ID = ?',
       [simId, customerId]
@@ -56,15 +66,22 @@ router.post('/recharge', async (req, res) => {
       return res.status(404).json({ error: 'SIM not found for this customer' });
     }
 
-    const result = await run(
-      'INSERT INTO recharge_portal (SIM_ID, Customer_ID, Recharge_Date, Amount, Payment_Mode) VALUES (?, ?, date("now"), ?, ?)',
-      [simId, customerId, Number(amount), paymentMode]
-    );
+    await run('BEGIN TRANSACTION');
+    try {
+      const result = await run(
+        'INSERT INTO recharge_portal (SIM_ID, Customer_ID, Recharge_Date, Amount, Payment_Mode) VALUES (?, ?, date("now"), ?, ?)',
+        [simId, customerId, normalizedAmount, paymentMode]
+      );
+      await run('COMMIT');
 
-    res.status(201).json({
-      message: 'Recharge successful',
-      rechargeId: result.lastID
-    });
+      res.status(201).json({
+        message: 'Recharge successful',
+        rechargeId: result.lastID
+      });
+    } catch (txErr) {
+      await run('ROLLBACK');
+      throw txErr;
+    }
   } catch (err) {
     console.error('POST /customer-portal/recharge error:', err);
     res.status(500).json({ error: err.message });

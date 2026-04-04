@@ -1,5 +1,7 @@
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const dbPath = path.join(__dirname, 'telecom_portal.sqlite');
 const db = new sqlite3.Database(dbPath);
@@ -31,6 +33,14 @@ function all(sql, params = []) {
   });
 }
 
+async function ensureColumn(tableName, columnName, columnDef) {
+  const columns = await all(`PRAGMA table_info(${tableName})`);
+  const exists = columns.some((c) => c.name === columnName);
+  if (!exists) {
+    await run(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnDef}`);
+  }
+}
+
 async function initSqlite() {
   await run(`CREATE TABLE IF NOT EXISTS admin_user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,7 +52,8 @@ async function initSqlite() {
     Customer_ID INTEGER PRIMARY KEY,
     Name TEXT NOT NULL,
     Aadhaar_Number TEXT NOT NULL UNIQUE,
-    Phone TEXT NOT NULL
+    Phone TEXT NOT NULL,
+    Password TEXT
   )`);
 
   await run(`CREATE TABLE IF NOT EXISTS plan_portal (
@@ -75,17 +86,35 @@ async function initSqlite() {
     FOREIGN KEY (Customer_ID) REFERENCES customer_portal(Customer_ID)
   )`);
 
+  await ensureColumn('customer_portal', 'Password', 'TEXT');
+
   const adminCount = await get('SELECT COUNT(*) AS count FROM admin_user');
   if (!adminCount || adminCount.count === 0) {
-    await run('INSERT INTO admin_user (username, password) VALUES (?, ?)', ['admin', 'admin123']);
+    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
+    const adminPassword = process.env.ADMIN_PASSWORD || crypto.randomBytes(12).toString('base64url');
+    const adminPasswordHash = await bcrypt.hash(adminPassword, 10);
+    await run('INSERT INTO admin_user (username, password) VALUES (?, ?)', [adminUsername, adminPasswordHash]);
+
+    if (!process.env.ADMIN_PASSWORD) {
+      console.warn(`No ADMIN_PASSWORD provided. Generated temporary admin password: ${adminPassword}`);
+    }
   }
 
   const customerCount = await get('SELECT COUNT(*) AS count FROM customer_portal');
   if (!customerCount || customerCount.count === 0) {
-    await run(`INSERT INTO customer_portal (Customer_ID, Name, Aadhaar_Number, Phone) VALUES
-      (1, 'Aarav Sharma', '123456789012', '9876543210'),
-      (2, 'Priya Patel', '234567890123', '9876543211'),
-      (3, 'Rahul Verma', '345678901234', '9876543212')`);
+    const customerSeed = [
+      { id: 1, name: 'Aarav Sharma', aadhaar: '123456789012', phone: '9876543210', password: 'cust@123' },
+      { id: 2, name: 'Priya Patel', aadhaar: '234567890123', phone: '9876543211', password: 'cust@234' },
+      { id: 3, name: 'Rahul Verma', aadhaar: '345678901234', phone: '9876543212', password: 'cust@345' }
+    ];
+
+    for (const c of customerSeed) {
+      const hash = await bcrypt.hash(c.password, 10);
+      await run(
+        'INSERT INTO customer_portal (Customer_ID, Name, Aadhaar_Number, Phone, Password) VALUES (?, ?, ?, ?, ?)',
+        [c.id, c.name, c.aadhaar, c.phone, hash]
+      );
+    }
 
     await run(`INSERT INTO plan_portal (Plan_ID, Plan_Name, Plan_Type, Cost, Data_Limit, Validity_Days) VALUES
       (1, 'Basic Prepaid', 'Prepaid', 199.00, '1.5 GB/day', 28),
@@ -97,6 +126,16 @@ async function initSqlite() {
       (2, '9001000002', 'Active', 1, 4),
       (3, '9001000003', 'Active', 2, 2),
       (10, '9001000010', 'Active', 3, 4)`);
+  }
+
+  const rowsNeedingPassword = await all(
+    'SELECT Customer_ID, Aadhaar_Number FROM customer_portal WHERE Password IS NULL OR Password = ""'
+  );
+
+  for (const row of rowsNeedingPassword) {
+    const fallbackPassword = `cust@${String(row.Aadhaar_Number).slice(-4)}`;
+    const hash = await bcrypt.hash(fallbackPassword, 10);
+    await run('UPDATE customer_portal SET Password = ? WHERE Customer_ID = ?', [hash, row.Customer_ID]);
   }
 }
 
