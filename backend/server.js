@@ -16,6 +16,9 @@ const billRoutes      = require('./routes/bills');
 const paymentRoutes   = require('./routes/payments');
 const callRecordRoutes = require('./routes/callrecords');
 const complaintRoutes = require('./routes/complaints');
+const authSqliteRoutes = require('./routes/authSqlite');
+const customerPortalRoutes = require('./routes/customerPortal');
+const { initSqlite } = require('./sqliteDb');
 
 // Use Routes
 app.use('/api/customers',   customerRoutes);
@@ -25,6 +28,8 @@ app.use('/api/bills',       billRoutes);
 app.use('/api/payments',    paymentRoutes);
 app.use('/api/callrecords', callRecordRoutes);
 app.use('/api/complaints',  complaintRoutes);
+app.use('/api/auth', authSqliteRoutes);
+app.use('/api/customer-portal', customerPortalRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -58,6 +63,14 @@ app.get('/api/dashboard', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+
+initSqlite()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to initialize SQLite database:', err);
+    process.exit(1);
+  });
